@@ -1,21 +1,17 @@
-# Chapter 4
+# Node.js-Web-Development-Fifth-Edition (Book)
 
-`./EventEmitter/*`
+> Code repo: https://github.com/robogeek/Node.js-Web-Development-Fifth-Edition
 
-> This demo app uses the EventEmitter class to emit "pulse" events every second with a listener writing to the console
+This book takes us through installing and setting up Node, how it works, and developing an Express Application.
 
-`./HTTPServer/*`
+We learn about how to create microservice architectures, authentication, data storage and retrieval, socket.io, deploying through Docker and Terraform on AWS. All the while using the latest features of Node (2020). Additionally practices around Unit and Functional Testing, Security
 
-> This demo app shows how the HTTP module can be used to serve webpages and setup specific routing. Additionally we have used `util` and `os` to get information about the server
+---
 
-`./HTTPSniffer/*`
+## Chapter04: The event loop and intro to express applications
 
-> This module is used in the HTTPServer above to sniff all network trafic when it's running (adding `sniffOn(server)` to our `server.mjs` above)
+We start learning about how Node.js works and specifically the event loop / the way to code Node.js applications.
 
-```js
-...
-server.listen(new URL(listenOn).port);
-sniffOn(server);
-console.log(`listening to ${listenOn}`);
-...
-```
+- See `chapter04` for code examples and the `readme.md` for learnings and notes.
+
+---
