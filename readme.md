@@ -12,6 +12,8 @@ We learn about how to create microservice architectures, authentication, data st
 
 We start learning about how Node.js works and specifically the event loop / the way to code Node.js applications.
 
-- See `chapter04` for code examples and the `readme.md` for learnings and notes.
-
 ---
+
+## Chapter05: Building an Express Application – Notes app
+
+We build a bare bones notes application from scratch using MVC, CRUD and handlebars as the chosen template engine. We briefly look at scaling the application and how our in memory store will not work well!
