@@ -17,3 +17,7 @@ We start learning about how Node.js works and specifically the event loop / the 
 ## Chapter05: Building an Express Application – Notes app
 
 We build a bare bones notes application from scratch using MVC, CRUD and handlebars as the chosen template engine. We briefly look at scaling the application and how our in memory store will not work well!
+
+## Chapter06: Mobile first!
+
+Not much NodeJS goes on in this chapter. We instead simply look at modifying the UI for mobile-first using Bootstrap.

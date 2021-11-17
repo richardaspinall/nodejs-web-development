@@ -1,0 +1,27 @@
+{
+  "name": "notes",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cross-env DUBUG=notes:* nodemon -e hbs ./app.mjs",
+    "dl-minty": "mkdir -p minty && npm run dl-minty-css && npm run dl-minty-min-css",
+    "dl-minty-css": "wget https://bootswatch.com/4/minty/bootstrap.css -O minty/bootstrap.css",
+    "dl-minty-min-css": "wget https://bootswatch.com/4/minty/bootstrap.min.css -O minty/bootstrap.min.css"
+  },
+  "dependencies": {
+    "bootstrap": "4.5.x",
+    "cookie-parser": "~1.4.4",
+    "cross-env": "^7.0.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "feather-icons": "^4.28.0",
+    "hbs": "^4.2.0",
+    "http-errors": "~1.6.3",
+    "jquery": "3.5.x",
+    "morgan": "~1.9.1",
+    "popper.js": "1.16.x"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
