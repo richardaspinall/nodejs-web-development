@@ -1,9 +1,17 @@
 // const util = require('util')
 
 import { default as express } from 'express';
-import { NotesStore as notes } from '../app.mjs';
+import { NotesStore as notes } from '../models/notes-store.mjs';
+import { default as DBG } from 'debug';
+const debug = DBG('notes:debug');
+const dbgerror = DBG('notes:error');
 
 export const router = express.Router();
+
+// router.use('/', (req, res, next) => {
+//   debug(`${new Date().toISOString()} request ${req.method} ${req.url}`);
+//   next();
+// });
 
 // Add Note.
 router.get('/add', (req, res, next) => {

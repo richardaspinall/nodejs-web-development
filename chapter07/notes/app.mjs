@@ -4,6 +4,10 @@ import * as path from 'path';
 // import * from favicon from 'serve-favicon'
 import { default as logger } from 'morgan';
 import { default as rfs } from 'rotating-file-stream';
+import { default as DBG } from 'debug';
+const debug = DBG('notes:debug');
+const dbgerror = DBG('notes:error');
+
 import { default as cookieParser } from 'cookie-parser';
 import * as http from 'http';
 import { approotdir } from './approotdir.mjs';
@@ -14,8 +18,13 @@ import { router as indexRouter } from './routes/index.mjs';
 import exp from 'constants';
 import { router as notesRouter } from './routes/notes.mjs';
 
-import { InMemoryNotesStore } from './models/notes-memory.mjs';
-export const NotesStore = new InMemoryNotesStore();
+import { useModel as useNotesModel } from './models/notes-store.mjs';
+useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : 'memory')
+  .then((store) => {})
+  .catch((error) => {
+    onError({ code: 'ENOTESSTORE', error });
+  });
+
 export const app = express();
 
 //view engine setup
@@ -39,9 +48,10 @@ app.use(
   })
 );
 
-if (process.env.REQUEST_LOG_FILE) {
-  app.use(logger(process.env.REQUEST_LOG_FORMAT || 'dev'));
-}
+// Don't need this anymore because we can turn on our own DEBUG flag
+// if (process.env.REQUEST_LOG_FILE) {
+//   app.use(logger(process.env.REQUEST_LOG_FORMAT || 'dev'));
+// }
 
 // Express config for request bodys
 app.use(express.json());
@@ -75,5 +85,10 @@ app.set('port', port);
 
 export const server = http.createServer(app);
 server.listen(port);
+
+server.on('request', (req, res) => {
+  debug(`${new Date().toISOString()} request ${req.method} ${req.url}`);
+});
+
 server.on('error', onError);
 server.on('listening', onListening);
