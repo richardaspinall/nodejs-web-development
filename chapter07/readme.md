@@ -107,7 +107,7 @@ In addition to the function implementations, LevelDB (and future DBs) requires u
 
 **Notes:**
 
-- Note: simultaneous access to a database is not supported so we can't have two instances of our server running and accessing this DB (it locks the files)
+- Simultaneous access to a database is not supported so we can't have two instances of our server running and accessing this DB (it locks the files)
 
 ## SQLite3 data store
 
@@ -115,8 +115,14 @@ In addition to the function implementations, LevelDB (and future DBs) requires u
 
 **Run:**
 
-> `npm run sqllite3-start`
+> `npm run sqlite3-start`
 
 **Implementation steps:**
 
+We started by installing the `sqlite3` package (https://www.npmjs.com/package/sqlite3), then created a schema in `models/schema-sqlite3.sql` with a script to initialize our database (`npm run sqlite3-setup`)
+
 **Notes:**
+
+- SQLite is already installed on MacOS (command `sqlite3` will open the program in your shell)
+
+- `control D` to exit `sqlite3`
