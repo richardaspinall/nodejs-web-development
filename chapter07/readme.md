@@ -54,7 +54,15 @@ We can run the app with debugging switched on via: `DEBUG=notes:* node ./app.mjs
 
 ---
 
-`npm run fs-start`
+**Directory:**
+
+> `models/notes-fs.mjs`
+
+**Run:**
+
+> `npm run fs-start`
+
+**Implementation steps:**
 
 We implemented storage in a filesystem by creating a new model extending the current `AbstractNotesStore` (`models/Notes.mjs)
 
@@ -73,6 +81,42 @@ useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : 'memory')
   });
 ```
 
-We run the file storage implementation of the server with: `cross-env DEBUG=notes:* PORT=3000 NOTES_MODEL=fs node ./app.mjs` noting `NOTES_MODEL=fs` (each model is named `notes-XXX.mjs` where XXX is replaced by the name of the store implementation)
+**Notes:**
+
+- We run the file storage implementation of the server with:
+
+  `cross-env DEBUG=notes:* PORT=3000 NOTES_MODEL=fs node ./app.mjs`
+
+  where `NOTES_MODEL=fs` (each model is named `notes-XXX.mjs` where XXX is replaced by the name of the store implementation)
 
 ## LevelDB data store
+
+**Directory:**
+
+> `models/notes-level.mjs`
+
+**Run:**
+
+> `npm run level-start`
+
+**Implementation steps:**
+
+Same as the file system store: we implement a new store extending `AbstractNotesStore`, and we are using LevelDB (https://www.npmjs.com/package/level) for this implementation.
+
+In addition to the function implementations, LevelDB (and future DBs) requires us to close the DB connection. From `./appsupport.mjs` (`catchProcessDeath()`) we added code to catch when the process is failes and dies (expectedly or unexpectedly) through Unix process signals.
+
+**Notes:**
+
+- Note: simultaneous access to a database is not supported so we can't have two instances of our server running and accessing this DB (it locks the files)
+
+## SQLite3 data store
+
+> `models/notes-sqlite3.mjs`
+
+**Run:**
+
+> `npm run sqllite3-start`
+
+**Implementation steps:**
+
+**Notes:**
