@@ -121,6 +121,10 @@ In addition to the function implementations, LevelDB (and future DBs) requires u
 
 We started by installing the `sqlite3` package (https://www.npmjs.com/package/sqlite3), then created a schema in `models/schema-sqlite3.sql` with a script to initialize our database (`npm run sqlite3-setup`)
 
+As before we extend the `AbstractNotesStore` and implement each of the functions. This time `create()` and `update()` are actually different so we don't combine them in a helper function and call it from each – we implement each separately.
+
+`db.get()` returns one row, and `db.all()` returns all – this is used in `keylist()` to return all of the keys which we use the `map()` function to do.
+
 **Notes:**
 
 - SQLite is already installed on MacOS (command `sqlite3` will open the program in your shell)

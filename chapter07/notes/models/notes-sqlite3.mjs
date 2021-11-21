@@ -37,7 +37,7 @@ export default class SQLITE3NotesStore extends AbstractNotesStore {
     const db = await connectDB();
     const note = new Note(key, title, body);
     await new Promise((resolve, reject) => {
-      db.run('UPDATE notes ' + 'SET title = ?m body = ? WHERE notekey = ?;', [title, body, key], (err) => {
+      db.run('UPDATE notes ' + 'SET title = ?, body = ? WHERE notekey = ?;', [title, body, key], (err) => {
         if (err) return reject(err);
         resolve(note);
       });
@@ -49,11 +49,60 @@ export default class SQLITE3NotesStore extends AbstractNotesStore {
     const db = await connectDB();
     const note = new Note(key, title, body);
     await new Promise((resolve, reject) => {
-      db.run('INSERT INTO notes (noteskey,title,body)' + 'VALUES (?,?,?);', [title, body, key], (err) => {
+      db.run('INSERT INTO notes (notekey, title, body)' + 'VALUES (?,?,?);', [title, body, key], (err) => {
         if (err) return reject(err);
         resolve(note);
       });
     });
     return note;
+  }
+
+  async read(key) {
+    const db = await connectDB();
+    const note = await new Promise((resolve, reject) => {
+      db.get('SELECT * FROM notes WHERE notekey = ?', [key], (err, row) => {
+        if (err) return reject(err);
+        const note = new Note(row.notekey, row.title, row.body);
+        resolve(note);
+      });
+    });
+    return note;
+  }
+
+  async destroy(key) {
+    const db = await connectDB();
+    return await new Promise((resolve, reject) => {
+      db.run('DELETE FROM notes WHERE notekey = ?;', [key], (err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+  }
+
+  async keylist() {
+    const db = await connectDB();
+    const keyz = await new Promise((resolve, reject) => {
+      const keyz = [];
+      db.all('SELECT notekey FROM notes', (err, rows) => {
+        if (err) return reject(err);
+        resolve(
+          rows.map((row) => {
+            return row.notekey;
+          })
+        );
+      });
+    });
+    return keyz;
+  }
+
+  async count() {
+    const db = await connectDB();
+    const count = await new Promise((resolve, reject) => {
+      db.get('SELECT count(notekey) as count FROM notes', (err, row) => {
+        if (err) return reject(err);
+        resolve(row.count);
+      });
+    });
+    return count;
   }
 }
