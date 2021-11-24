@@ -91,6 +91,12 @@ useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : 'memory')
 
 ## LevelDB data store
 
+---
+
+**Packages:**
+
+https://www.npmjs.com/package/level
+
 **Directory:**
 
 > `models/notes-level.mjs`
@@ -111,6 +117,14 @@ In addition to the function implementations, LevelDB (and future DBs) requires u
 
 ## SQLite3 data store
 
+---
+
+**Packages:**
+
+https://www.npmjs.com/package/sqlite3
+
+**Directory:**
+
 > `models/notes-sqlite3.mjs`
 
 **Run:**
@@ -130,3 +144,35 @@ As before we extend the `AbstractNotesStore` and implement each of the functions
 - SQLite is already installed on MacOS (command `sqlite3` will open the program in your shell)
 
 - `control D` to exit `sqlite3`
+
+## ORM with Sequelize (connecting to SQLite3)
+
+Sequelize takes care of all of our SQL queries and so we can think in terms of objects rather than rows of a database table
+
+**Packages:**
+
+https://www.npmjs.com/package/sequelize
+
+https://www.npmjs.com/package/js-yaml
+
+**Directory:**
+
+> `models/sequlz.mjs` (config and connecting to Sequelize)
+> `models/sequelize-sqlite.yaml` (YAML config file)
+> `models/notes-`
+
+**Run:**
+
+> `npm run sequelize-start`
+
+**Implementation steps:**
+
+First we configured a YAML file found `models/sequelize-sqlite.yaml` which we load via `SEQUELIZE_CONNECT` environment variable.
+
+The module `models/sequlz.mjs` to `connectDB()` pulls in the config from above or they get overriden the values if we already specific environment variables configured in our server (or passed in manually – later in Docker for instance). It also creates our authenticates our config with Sequelize (/ the corrosponding DB).
+
+We then implement extend the `AbstractNotesStore` and defined our `Sequelize.Model` (SQNote) in `models/notes-sequelize.mjs`
+
+**Notes:**
+
+- With the above set up and the corresponding Node.js driver, we can switch out our database server using `params.dialect` in the YAML file – say to use MySQL.

@@ -36,6 +36,7 @@ hbs.registerPartials(path.join(__dirname, 'partials'));
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 // Logging through Morgan
+// TODO: this doubles up logging when we add DEBUG=notes:*
 app.use(
   logger(process.env.REQUEST_LOG_FORMAT || 'dev', {
     stream: process.env.REQUEST_LOG_FILE
@@ -86,9 +87,10 @@ app.set('port', port);
 export const server = http.createServer(app);
 server.listen(port);
 
-server.on('request', (req, res) => {
-  debug(`${new Date().toISOString()} request ${req.method} ${req.url}`);
-});
+// TODO: this doubles up logging when we add DEBUG=notes:*
+// server.on('request', (req, res) => {
+//   debug(`${new Date().toISOString()} request ${req.method} ${req.url}`);
+// });
 
 server.on('error', onError);
 server.on('listening', onListening);
