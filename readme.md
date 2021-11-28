@@ -1,5 +1,9 @@
 # Node.js-Web-Development-Fifth-Edition (Book)
 
+# Purchase this book! 
+
+https://www.packtpub.com/product/node-js-web-development-fifth-edition/9781838987573
+
 > Code repo: https://github.com/robogeek/Node.js-Web-Development-Fifth-Edition
 
 This book takes us through installing and setting up Node, how it works, and developing an Express Application.
@@ -32,3 +36,5 @@ Some great concepts are covered in this chapter:
     - Catching important errors
     - Using `import()` to enable runtime selection of databases to use
     - Designing simple configuration files with YAML
+
+## Chapter08 Authenticating Users with a Microservice
