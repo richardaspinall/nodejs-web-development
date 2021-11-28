@@ -1,4 +1,4 @@
-# Chapter06: Data Storage
+# Chapter07: Data Storage
 
 ## Changing our logging format
 
@@ -147,6 +147,8 @@ As before we extend the `AbstractNotesStore` and implement each of the functions
 
 ## ORM with Sequelize (connecting to SQLite3)
 
+---
+
 Sequelize takes care of all of our SQL queries and so we can think in terms of objects rather than rows of a database table
 
 **Packages:**
@@ -159,7 +161,7 @@ https://www.npmjs.com/package/js-yaml
 
 > `models/sequlz.mjs` (config and connecting to Sequelize)
 > `models/sequelize-sqlite.yaml` (YAML config file)
-> `models/notes-`
+> `models/notes-sequelize.mjs`
 
 **Run:**
 
@@ -176,3 +178,39 @@ We then implement extend the `AbstractNotesStore` and defined our `Sequelize.Mod
 **Notes:**
 
 - With the above set up and the corresponding Node.js driver, we can switch out our database server using `params.dialect` in the YAML file – say to use MySQL.
+
+## MongoDB data store (non-mongoose implementation)
+
+---
+
+**Packages:**
+
+Installed with **brew**: `brew tap mongodb/brew`:
+
+https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/
+
+https://www.npmjs.com/package/mongodb (Using version 3: `npm i mongodb@3.x`)
+
+**Directory:**
+
+> `models/notes-mongodb.mjs`
+
+**Run:**
+
+> `mongod --dbpath data` (Running the daemon from the `data` directory)
+
+> `mongo` (enter interactive shell for interacting with the database)
+
+> `npm run mongodb-start`
+
+**Implementation steps:**
+
+Installed MongoDB 5.0 Community Edition on macOS
+
+**Notes:**
+
+- We haven't used Mongoose (ORM) in this implementation but it would be a good alternative to the native MongoDB driver
+
+# Summary
+
+We implemented several different database technologies above. This was a really good intro to abstraction which shows how to easily swich between the different databases.

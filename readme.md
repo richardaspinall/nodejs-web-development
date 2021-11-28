@@ -22,12 +22,13 @@ We build a bare bones notes application from scratch using MVC, CRUD and handleb
 
 Not much NodeJS goes on in this chapter. We instead simply look at modifying the UI for mobile-first using Bootstrap.
 
-## Chapter06: Data Storage
+## Chapter07: Data Storage
 
 Some great concepts are covered in this chapter:
 
+    - Abstractions of data model implementations by subclassing
+    - Implementing data persistence using several database engines
     - Logging debugging information
     - Catching important errors
     - Using `import()` to enable runtime selection of databases to use
-    - Implementing data persistence using several database engines
     - Designing simple configuration files with YAML
