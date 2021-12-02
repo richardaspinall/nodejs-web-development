@@ -1,8 +1,6 @@
 # Node.js-Web-Development-Fifth-Edition (Book)
 
-# Purchase this book! 
-
-https://www.packtpub.com/product/node-js-web-development-fifth-edition/9781838987573
+Pick up from Packt publishing: https://www.packtpub.com/product/node-js-web-development-fifth-edition/9781838987572
 
 > Code repo: https://github.com/robogeek/Node.js-Web-Development-Fifth-Edition
 

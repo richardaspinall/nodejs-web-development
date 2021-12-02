@@ -197,6 +197,8 @@ https://www.npmjs.com/package/mongodb (Using version 3: `npm i mongodb@3.x`)
 
 **Run:**
 
+> `mkdir data` (Create data directory)
+
 > `mongod --dbpath data` (Running the daemon from the `data` directory)
 
 > `mongo` (enter interactive shell for interacting with the database)
