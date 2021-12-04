@@ -25,8 +25,6 @@ https://www.npmjs.com/package/commander (commander is a great framework for deve
 
 ### Implementation steps
 
-<br>
-
 #### Set up and configuration
 
 We created a starting point for our CLI in `cli.mjs`. It can take several parameters from the command line as process arguments `process.argv` and configures them into the program, otherwise it will default to `localhost`.
@@ -50,16 +48,36 @@ In one window run `npm start` to start the `user-auth-server` and in the other w
 
 Which will add the user!
 
-#### Add the rest of the commands
+#### Adding the rest of the CRUD commands
 
 We then added the endpoints and commands to find, update and delete users
 
-Find a user: `node cli.mjs find richie`
+Find a user:
 
-List all users: `node cli.mjs list-users`
+`node cli.mjs find richie`
 
-Update a user: `node cli.mjs update richie--password w0rd --family-name Aspinall --given-name Richard --email test@updatedemailaddress.com`
+List all users:
 
-Delete a user: `node cli.mjs destroy richie`
+`node cli.mjs list-users`
+
+Update a user:
+
+`node cli.mjs update richie--password w0rd --family-name Aspinall --given-name Richard --email test@updatedemailaddress.com`
+
+Delete a user:
+
+`node cli.mjs destroy richie`
+
+#### Password check implementation and command
+
+We need a way to check the password which can be simply done by sending the username and password to our server then doing a few checks. The implementation at this stage is not doing any encryption on the password but we are ensuring that the password does not go beyond the boundry of this server.
+
+We implemented the `/password-check` route for this
+
+Then we created the associated CLI command `password-check`:
+
+`node cli.mjs password-check richie wOrd`
 
 ---
+
+## Authentication with the Notes applciation
