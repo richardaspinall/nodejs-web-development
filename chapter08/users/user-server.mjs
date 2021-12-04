@@ -34,7 +34,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 // Mimic API Key authentication.
 
-var apiKeys = [{ user: 'them', key: 'DBHBVHBV-8474-4764-4736-47536475' }];
+var apiKeys = [{ user: 'them', key: 'D4ED43C0-8BD6-4FE2-B358-7C0E230D11EF' }];
 
 function check(req, res, next) {
   if (req.authorization && req.authorization.basic) {
@@ -55,3 +55,100 @@ function check(req, res, next) {
     next(false);
   }
 }
+
+server.post('/create-user', async (req, res, next) => {
+  try {
+    await connectDB();
+    let result = await createUser(req);
+    res.contentType = 'json';
+    res.send(result);
+    next(false);
+  } catch (err) {
+    res.send(500, err);
+    next(false);
+  }
+});
+
+server.post('/find-or-create', async (req, res, next) => {
+  try {
+    await connectDB();
+    let user = await findOneUser(req.params.username);
+    if (!user) {
+      user = await createUser(req);
+      if (!user) throw new Error('No user created');
+    }
+    res.contentType = 'json';
+    res.send(user);
+    return next(fals);
+  } catch (err) {
+    res.send(500, err);
+    next(false);
+  }
+});
+
+server.get('/find/:username', async (req, res, next) => {
+  try {
+    await connectDB();
+    const user = await findOneUser(req.params.username);
+    if (!user) {
+      res.send(404, new Error('Did not find ' + req.params.username));
+    } else {
+      res.contentType = 'json';
+      res.send(user);
+    }
+    next(false);
+  } catch (err) {
+    res.send(500, err);
+    next(false);
+  }
+});
+
+server.get('/list', async (req, res, next) => {
+  try {
+    await connectDB();
+    let userlist = await SQUser.findAll({});
+    if (!userlist) userlist = [];
+    userlist = userlist.map((user) => sanitizedUser(user));
+    res.contentType = 'json';
+    res.send(userlist);
+    next(false);
+  } catch (err) {
+    res.send(500, err);
+    next(false);
+  }
+});
+
+server.post('/update-user/:username', async (req, res, next) => {
+  try {
+    await connectDB();
+    console.log('test');
+    let toupdate = userParams(req);
+    await SQUser.update(toupdate, { where: { username: req.params.username } });
+    const result = await findOneUser(req.params.username);
+    res.contentType = 'json';
+    res.send(result);
+    next(false);
+  } catch (err) {
+    res.send(500, err);
+    next(false);
+  }
+});
+
+server.del('/destroy/:username', async (req, res, next) => {
+  try {
+    await connectDB();
+    const user = await SQUser.findOne({
+      where: { username: req.params.username },
+    });
+    if (!user) {
+      res.send(404, new Error(`Did not find requested ${req.params.username} to delete`));
+    } else {
+      user.destroy();
+      res.contentType = 'json';
+      res.send({});
+    }
+  } catch (err) {
+    res.send(500, err);
+    next(false);
+  }
+});
