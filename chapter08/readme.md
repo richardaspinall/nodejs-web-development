@@ -81,3 +81,20 @@ Then we created the associated CLI command `password-check`:
 ---
 
 ## Authentication with the Notes applciation
+
+**Packages:**
+https://www.npmjs.com/package/superagent
+
+### Implementation steps
+
+Started by installing SuperAgent for our promise based web requests
+
+Next we create a new model `models/users-superagent.mjs` which is essentially an interface to the user server. It makes API REST calls using SuperAgent to the user server and returns the responses to our Notes application. This is our user data model.
+
+**A Tracer Bullet example**
+
+1. From `notes/models/users-superagent.mjs::findOrCreate()` we POST a profile via separate parmeters as JSON to the API endpoint on our user server `users/user-server.mjs::/find-or-create`.
+2. From `users/user-server.mjs::/find-or-create` we call `users/users-sequelize.mjs::findOneUser()` passing the username parameter
+3. `users/users-sequelize.mjs::findOneUser()` which checks for the user and if there is one, it calls `users/users-sequelize.mjs::sanitizedUser()` to return the user as a user object minus the password completing the trace in the response (inside the `users/user-server.mjs::/find-or-create` endpint). Otherwise it returns undefined and we move to step **4.** below
+4. Returning with undefined from step **3.** we are back inside `users/user-server.mjs::/find-or-create` and we call `users/users-sequelize.mjs::createUser()` with the request.
+5. From `users/users-sequelize.mjs::createUser()` we call `users/users-sequelize.mjs::userParams()` which simply pulls the parameters off the request and returns a "user object" that can be used to create the user
