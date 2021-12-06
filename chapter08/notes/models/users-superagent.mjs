@@ -20,7 +20,7 @@ export async function create(username, password, provider, familyName, givenName
     .post(reqURL('/create-user'))
     .send({
       username,
-      password: await hashpass(password),
+      password: password,
       provider,
       familyName,
       givenName,
@@ -39,7 +39,7 @@ export async function update(username, password, provider, familyName, givenName
     .post(reqURL(`/update-user/${username}`))
     .send({
       username,
-      password: await hashpass(password),
+      password: password,
       provider,
       familyName,
       givenName,
