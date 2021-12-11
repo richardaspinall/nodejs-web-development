@@ -62,6 +62,7 @@ passport.use(
     try {
       var check = await usersModel.userPasswordCheck(username, password);
       if (check.check) {
+        debug(check);
         done(null, { id: check.username, username: check.username });
       } else {
         done(null, false, check.message);
@@ -73,8 +74,19 @@ passport.use(
 );
 
 passport.serializeUser(function (user, done) {
+  console.log('TESTTTTT' + user);
+  console.log(user);
   try {
     done(null, user.username);
+  } catch (e) {
+    done(e);
+  }
+});
+
+passport.deserializeUser(async (username, done) => {
+  try {
+    let user = await usersModel.find(username);
+    done(null, user);
   } catch (e) {
     done(e);
   }

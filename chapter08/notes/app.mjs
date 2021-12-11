@@ -5,6 +5,9 @@ import * as path from 'path';
 import { default as logger } from 'morgan';
 import { default as rfs } from 'rotating-file-stream';
 import { default as DBG } from 'debug';
+
+import { default as passport } from 'passport';
+
 const debug = DBG('notes:debug');
 const dbgerror = DBG('notes:error');
 
@@ -21,20 +24,20 @@ import { router as usersRouter, initPassport } from './routes/users.mjs';
 import session from 'express-session';
 // For compatible session store packages, see:
 //      http://expressjs.com/en/resources/middleware/session.html#compatible-session-stores
+
 // Uncomment this for session-file-store
-import sessionFileStore from 'session-file-store';
-const FileStore = sessionFileStore(session);
+// NOTE: does not work cos of some race condition: https://github.com/valery-barysok/session-file-store/issues
+// import sessionFileStore from 'session-file-store';
+// const FileStore = sessionFileStore(session);
 // Uncomment this for connect-loki
 // import sessionLokiStore from 'connect-loki';
 // const LokiStore = sessionLokiStore(session);
-// Uncomment this for memorystore
-// import sessionMemoryStore from 'memorystore';
-// const MemoryStore = sessionMemoryStore(session);
-export const sessionCookieName = 'notescookie.sid';
 
-import { router as indexRouter } from './routes/index.mjs';
-import exp from 'constants';
-import { router as notesRouter } from './routes/notes.mjs';
+// Uncomment this for memorystore
+import sessionMemoryStore from 'memorystore';
+const MemoryStore = sessionMemoryStore(session);
+
+export const sessionCookieName = 'notescookie.sid';
 
 import { useModel as useNotesModel } from './models/notes-store.mjs';
 useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : 'memory')
@@ -75,17 +78,21 @@ app.use(
 // Express config for request bodys
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 // Cookie parsing
 app.use(cookieParser());
+
+// Sending the `/public/` folder's goodies (static files like CSS and JS) to our users
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Adding session support into express (locally on a file or memory or through a db / loki)
 app.use(
   session({
     // Use the appropriate session store class
-    // store: new MemoryStore({}),
+    store: new MemoryStore({}),
     // store: new LokiStore({}),
-    store: new FileStore({ path: 'sessions' }),
+    //
+    // FileStore does not work because of some network race condition: https://github.com/valery-barysok/session-file-store/issues
+    //store: new FileStore({path: "sessions"}),
     secret: 'keyboard mouse',
     resave: true,
     saveUninitialized: true,
@@ -93,8 +100,9 @@ app.use(
   })
 );
 
-// Sending the `/public/` folder's goodies (static files like CSS and JS) to our users
-app.use(express.static(path.join(__dirname, 'public')));
+// initPassport(app);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Loading Bootstrap... from correct `node_modules` path
 // app.use('/assets/vendor/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
@@ -107,6 +115,7 @@ app.use('/assets/vendor/feather-icons', express.static(path.join(__dirname, 'nod
 // Router function lists
 app.use('/', indexRouter);
 app.use('/notes', notesRouter);
+app.use('/users', usersRouter);
 
 // error handlers
 // catch 404 and forward to error handler
