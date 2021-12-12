@@ -70,11 +70,14 @@ export function basicErrorHandler(err, req, res, next) {
   // Defer to built-in error handler if headersSent
   // See: http://expressjs.com/en/guide/error-handling.html
   if (res.headersSent) {
+    debug(`basicErrorHandler HEADERS SENT error ${util.inspect(err)}`);
     return next(err);
   }
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  dbgerror(`basicErrorHandler ${err.status || 500} ${util.inspect(res.locals)} ${util.inspect(err)}`);
 
   // render the error page
   res.status(err.status || 500);

@@ -4,8 +4,9 @@ import { default as express } from 'express';
 import { default as passport } from 'passport';
 import { default as passportLocal } from 'passport-local';
 const LocalStrategy = passportLocal.Strategy;
-// import passportTwitter from 'passport-twitter';
-// const TwitterStrategy = passportTwitter.Strategy;
+import passportTwitter from 'passport-twitter';
+const TwitterStrategy = passportTwitter.Strategy;
+
 import * as usersModel from '../models/users-superagent.mjs';
 import { sessionCookieName } from '../app.mjs';
 
@@ -62,7 +63,6 @@ passport.use(
     try {
       var check = await usersModel.userPasswordCheck(username, password);
       if (check.check) {
-        debug(check);
         done(null, { id: check.username, username: check.username });
       } else {
         done(null, false, check.message);
@@ -74,8 +74,6 @@ passport.use(
 );
 
 passport.serializeUser(function (user, done) {
-  console.log('TESTTTTT' + user);
-  console.log(user);
   try {
     done(null, user.username);
   } catch (e) {
@@ -91,3 +89,54 @@ passport.deserializeUser(async (username, done) => {
     done(e);
   }
 });
+
+const twittercallback = process.env.TWITTER_CALLBACK_HOST ? process.env.TWITTER_CALLBACK_HOST : 'http://localhost:3000';
+export var twitterLogin;
+
+if (
+  typeof process.env.TWITTER_CONSUMER_KEY !== 'undefined' &&
+  process.env.TWITTER_CONSUMER_KEY !== '' &&
+  typeof process.env.TWITTER_CONSUMER_SECRET !== 'undefined' &&
+  process.env.TWITTER_CONSUMER_SECRET !== ''
+) {
+  passport.use(
+    new TwitterStrategy(
+      {
+        consumerKey: process.env.TWITTER_CONSUMER_KEY,
+        consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+        callbackURL: `${twittercallback}/users/auth/twitter/callback`,
+      },
+      async function (token, tokenSecret, profile, done) {
+        try {
+          done(
+            null,
+            await usersModel.findOrCreate({
+              id: profile.username,
+              username: profile.username,
+              password: '',
+              provider: profile.provider,
+              familyName: profile.displayName,
+              givenName: '',
+              middleName: '',
+              photos: profile.photos,
+              emails: profile.emails,
+            })
+          );
+        } catch (err) {
+          done(err);
+        }
+      }
+    )
+  );
+
+  twitterLogin = true;
+} else {
+  twitterLogin = false;
+}
+
+router.get('/auth/twitter', passport.authenticate('twitter'));
+
+router.get(
+  '/auth/twitter/callback',
+  passport.authenticate('twitter', { successRedirect: '/', failureRedirect: '/users/login' })
+);

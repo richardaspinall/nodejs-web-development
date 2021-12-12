@@ -1,6 +1,8 @@
 import { default as program } from 'commander';
 import { default as restify } from 'restify-clients';
 import * as util from 'util';
+import { default as bcrypt } from 'bcrypt';
+const saltRounds = 10;
 
 var client_port;
 var client_host;
@@ -8,6 +10,12 @@ var client_version = '*';
 var client_protocol;
 var authid = 'them';
 var authcode = 'D4ED43C0-8BD6-4FE2-B358-7C0E230D11EF';
+
+async function hashpass(password) {
+  let salt = await bcrypt.genSalt(saltRounds);
+  let hashed = await bcrypt.hash(password, salt);
+  return hashed;
+}
 
 const client = (program) => {
   if (typeof process.env.PORT === 'string') client_port = Number.parseInt(process.env.PORT);
@@ -48,10 +56,10 @@ program
   .option('--given-name <givenName>', 'Given name, or first name, of the user')
   .option('--middle-name <middleName>', 'Middle name of the user')
   .option('--email <email>', 'Email address for the user')
-  .action((username, cmdObj) => {
+  .action(async (username, cmdObj) => {
     const topost = {
       username,
-      password: cmdObj.password,
+      password: await hashpass(cmdObj.password),
       provider: 'local',
       familyName: cmdObj.familyName,
       givenName: cmdObj.givenName,
@@ -110,7 +118,10 @@ program
   .action((cmdObj) => {
     client(program).get('/list', (err, req, res, obj) => {
       if (err) console.error(err.stack);
-      else console.log(obj);
+      else {
+        console.log(obj);
+        // console.log(obj[3].photos); NOTE: Twitter profiles have a photo
+      }
     });
   });
 
@@ -125,7 +136,7 @@ program
   .action(async (username, cmdObj) => {
     const topost = {
       username,
-      password: cmdObj.password,
+      password: await hashpass(cmdObj.password),
       familyName: cmdObj.familyName,
       givenName: cmdObj.givenName,
       middleName: cmdObj.middleName,

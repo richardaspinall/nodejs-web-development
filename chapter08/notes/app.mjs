@@ -1,3 +1,4 @@
+import dotenv from 'dotenv/config.js';
 import { default as express } from 'express';
 import { default as hbs } from 'hbs';
 import * as path from 'path';
@@ -5,8 +6,6 @@ import * as path from 'path';
 import { default as logger } from 'morgan';
 import { default as rfs } from 'rotating-file-stream';
 import { default as DBG } from 'debug';
-
-import { default as passport } from 'passport';
 
 const debug = DBG('notes:debug');
 const dbgerror = DBG('notes:error');
@@ -57,7 +56,7 @@ hbs.registerPartials(path.join(__dirname, 'partials'));
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 // Logging through Morgan
-// TODO: this doubles up logging when we add DEBUG=notes:*
+// NOTE: this doubles up logging when we add DEBUG=notes:*
 app.use(
   logger(process.env.REQUEST_LOG_FORMAT || 'dev', {
     stream: process.env.REQUEST_LOG_FILE
@@ -84,26 +83,6 @@ app.use(cookieParser());
 // Sending the `/public/` folder's goodies (static files like CSS and JS) to our users
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Adding session support into express (locally on a file or memory or through a db / loki)
-app.use(
-  session({
-    // Use the appropriate session store class
-    store: new MemoryStore({}),
-    // store: new LokiStore({}),
-    //
-    // FileStore does not work because of some network race condition: https://github.com/valery-barysok/session-file-store/issues
-    //store: new FileStore({path: "sessions"}),
-    secret: 'keyboard mouse',
-    resave: true,
-    saveUninitialized: true,
-    name: sessionCookieName,
-  })
-);
-
-// initPassport(app);
-app.use(passport.initialize());
-app.use(passport.session());
-
 // Loading Bootstrap... from correct `node_modules` path
 // app.use('/assets/vendor/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
 app.use('/assets/vendor/bootstrap/js', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'js')));
@@ -111,6 +90,24 @@ app.use('/assets/vendor/bootstrap/css', express.static(path.join(__dirname, 'min
 app.use('/assets/vendor/jquery', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')));
 app.use('/assets/vendor/popper.js', express.static(path.join(__dirname, 'node_modules', 'popper.js', 'dist', 'umd')));
 app.use('/assets/vendor/feather-icons', express.static(path.join(__dirname, 'node_modules', 'feather-icons', 'dist')));
+
+// Adding session support into express (locally on a file or memory or through a db / loki)
+// NOTE: Passport session config should come after static files above otherwise they will trigger calls to DB
+app.use(
+  session({
+    // Use the appropriate session store class
+    store: new MemoryStore({}),
+    // store: new LokiStore({}),
+    //
+    // FileStore does not work because of some network race condition: https://github.com/valery-barysok/session-file-store/issues
+    // store: new FileStore({ path: 'sessions' }),
+    secret: 'keyboard mouse',
+    resave: true,
+    saveUninitialized: true,
+    name: sessionCookieName,
+  })
+);
+initPassport(app);
 
 // Router function lists
 app.use('/', indexRouter);

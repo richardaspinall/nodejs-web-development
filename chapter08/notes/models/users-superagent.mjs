@@ -2,12 +2,21 @@ import { default as request } from 'superagent';
 import util from 'util';
 import url from 'url';
 const URL = url.URL;
+import { default as bcrypt } from 'bcrypt';
+const saltRounds = 10;
+
 import DBG from 'debug';
 const debug = DBG('notes:users-superagent');
 const error = DBG('notes:error-superagent');
 
 var authid = 'them';
 var authcode = 'D4ED43C0-8BD6-4FE2-B358-7C0E230D11EF';
+
+async function hashpass(password) {
+  let salt = await bcrypt.genSalt(saltRounds);
+  let hashed = await bcrypt.hash(password, salt);
+  return hashed;
+}
 
 function reqURL(path) {
   const requrl = new URL(process.env.USER_SERVICE_URL);
@@ -20,7 +29,7 @@ export async function create(username, password, provider, familyName, givenName
     .post(reqURL('/create-user'))
     .send({
       username,
-      password: password,
+      password: await hashpass(password),
       provider,
       familyName,
       givenName,
@@ -39,7 +48,7 @@ export async function update(username, password, provider, familyName, givenName
     .post(reqURL(`/update-user/${username}`))
     .send({
       username,
-      password: password,
+      password: await hashpass(password),
       provider,
       familyName,
       givenName,
@@ -54,13 +63,11 @@ export async function update(username, password, provider, familyName, givenName
 }
 
 export async function find(username) {
-  console.log('finding user');
   var res = await request
     .get(reqURL(`/find/${username}`))
     .set('Content-Type', 'application/json')
     .set('Acccept', 'application/json')
     .auth(authid, authcode);
-  console.log('FOUND');
   return res.body;
 }
 
@@ -79,7 +86,7 @@ export async function findOrCreate(profile) {
     .post(reqURL('/find-or-create'))
     .send({
       username: profile.id,
-      password: profile.password,
+      password: await hashpass(profile.password),
       provider: profile.provider,
       familyName: profile.familyName,
       givenName: profile.givenName,

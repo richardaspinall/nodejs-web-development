@@ -35,6 +35,7 @@ export async function connectDB() {
     params.params.dialect = process.env.SEQUELIZE_DBDIALECT;
   }
 
+  // NOTE: Add logging: false to `sequelize-sqlite.yaml` to stop logging
   log('Sequelize params ' + util.inspect(params));
 
   sequlz = new Sequelize(params.dbname, params.username, params.password, params.params);

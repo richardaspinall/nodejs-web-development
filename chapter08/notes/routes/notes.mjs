@@ -4,6 +4,7 @@ import { default as express } from 'express';
 import { NotesStore as notes } from '../models/notes-store.mjs';
 import { default as DBG } from 'debug';
 import { ensureAuthenticated } from './users.mjs';
+import { twitterLogin } from './users.mjs';
 
 const debug = DBG('notes:debug');
 const dbgerror = DBG('notes:error');
@@ -22,6 +23,7 @@ router.get('/add', ensureAuthenticated, (req, res, next) => {
     docreate: true,
     notekey: '',
     user: req.user,
+    twitterLogin: twitterLogin,
     note: undefined,
   });
 });
@@ -30,6 +32,7 @@ router.get('/add', ensureAuthenticated, (req, res, next) => {
 router.post('/save', ensureAuthenticated, async (req, res, next) => {
   try {
     let note;
+    debug('Is trying to save');
     if (req.body.docreate === 'create') {
       note = await notes.create(req.body.notekey, req.body.title, req.body.body);
     } else {
@@ -49,6 +52,7 @@ router.get('/view', async (req, res, next) => {
       title: note ? note.title : '',
       notekey: req.query.key,
       user: req.user ? req.user : undefined,
+      twitterLogin: twitterLogin,
       note: note,
     });
   } catch (err) {
@@ -65,6 +69,7 @@ router.get('/edit', ensureAuthenticated, async (req, res, next) => {
       docreate: false,
       notekey: req.query.key,
       user: req.user,
+      twitterLogin: twitterLogin,
       note: note,
     });
   } catch (err) {
@@ -80,6 +85,7 @@ router.get('/destroy', ensureAuthenticated, async (req, res, next) => {
       title: note ? `Delete ${note.title}?` : '',
       notekey: req.query.key,
       user: req.user,
+      twitterLogin: twitterLogin,
       note: note,
     });
   } catch (err) {

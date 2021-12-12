@@ -1,8 +1,10 @@
 import restify from 'restify';
 import * as util from 'util';
 import { SQUser, connectDB, userParams, findOneUser, createUser, sanitizedUser } from './users-sequelize.mjs';
+import { default as bcrypt } from 'bcrypt';
 
 import DBG from 'debug';
+
 const log = DBG('users:service');
 const error = DBG('users:error');
 
@@ -79,7 +81,7 @@ server.post('/find-or-create', async (req, res, next) => {
     }
     res.contentType = 'json';
     res.send(user);
-    return next(fals);
+    return next(false);
   } catch (err) {
     res.send(500, err);
     next(false);
@@ -121,7 +123,6 @@ server.get('/list', async (req, res, next) => {
 server.post('/update-user/:username', async (req, res, next) => {
   try {
     await connectDB();
-    console.log('test');
     let toupdate = userParams(req);
     await SQUser.update(toupdate, { where: { username: req.params.username } });
     const result = await findOneUser(req.params.username);
@@ -166,14 +167,20 @@ server.post('/password-check', async (req, res, next) => {
         username: req.params.username,
         message: 'Could not find user',
       };
-    } else if (user.username === req.params.username && user.password === req.params.password) {
-      checked = { check: true, username: user.username };
     } else {
-      checked = {
-        check: false,
-        username: req.params.username,
-        message: 'Incorrect password',
-      };
+      let pwcheck = false;
+      if (user.username === req.params.username) {
+        pwcheck = await bcrypt.compare(req.params.password, user.password);
+      }
+      if (pwcheck) {
+        checked = { check: true, username: user.username };
+      } else {
+        checked = {
+          check: false,
+          username: req.params.username,
+          message: 'Incorrect username or password',
+        };
+      }
     }
     res.contentType = 'json';
     res.send(checked);
