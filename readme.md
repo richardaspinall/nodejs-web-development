@@ -36,3 +36,15 @@ Some great concepts are covered in this chapter:
     - Designing simple configuration files with YAML
 
 ## Chapter08 Authenticating Users with a Microservice
+
+- Creating a new microservice (users)
+
+- Creating a CLI to interact with the microservice
+
+- Interface from our Notes application to the microservice
+
+- Implemented Login support and OAuth support using passport strategies
+
+- Implemented encryption to keep things safe
+
+## Chapter09 Websockets with Socket.IO

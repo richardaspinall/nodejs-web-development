@@ -1,0 +1,47 @@
+{
+  "name": "notes",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cross-env DEBUG=notes:* SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize USER_SERVICE_URL=http://localhost:5858 node ./app.mjs",
+    "start-server1": "cross-env DEBUG=notes:* SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize USER_SERVICE_URL=http://localhost:5858 PORT=3000 node ./app.mjs",
+    "start-server2": "cross-env DEBUG=notes:* SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize USER_SERVICE_URL=http://localhost:5858 PORT=3002 node ./app.mjs",
+    "dl-minty": "mkdir -p minty && npm run dl-minty-css && npm run dl-minty-min-css",
+    "dl-minty-css": "wget https://bootswatch.com/4/minty/bootstrap.css -O minty/bootstrap.css",
+    "dl-minty-min-css": "wget https://bootswatch.com/4/minty/bootstrap.min.css -O minty/bootstrap.min.css"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "bootstrap": "4.5.x",
+    "cookie-parser": "~1.4.4",
+    "cross-env": "^7.0.3",
+    "debug": "~2.6.9",
+    "dotenv": "^10.0.0",
+    "express": "~4.16.1",
+    "express-session": "^1.17.0",
+    "feather-icons": "^4.28.0",
+    "fs-extra": "^10.0.0",
+    "hbs": "^4.2.0",
+    "http-errors": "~1.6.3",
+    "jquery": "3.5.x",
+    "js-yaml": "^4.1.0",
+    "level": "^6.0.1",
+    "memorystore": "^1.6.6",
+    "mongodb": "^3.7.3",
+    "morgan": "~1.9.1",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "passport-twitter": "^0.1.5",
+    "passport.socketio": "3.7",
+    "popper.js": "1.16.x",
+    "rotating-file-stream": "^3.0.1",
+    "sequelize": "^6.12.0-alpha.1",
+    "session-file-store": "^1.4.0",
+    "socket.io": "^2.4.1",
+    "sqlite3": "^4.2.0",
+    "superagent": "^6.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
