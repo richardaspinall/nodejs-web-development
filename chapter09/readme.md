@@ -1,4 +1,4 @@
-# Chapter08: Websockets with Socket.IO
+# Chapter09: Websockets with Socket.IO
 
 **Packages:**
 
@@ -92,7 +92,7 @@ Then in each subclass, we call these new functions from the approiate crud funct
 
 Whenever an event is emited (created,updated or detroyed), we have a listner that calls the following `emitNoteTitles()` function and then emits to any client connected to the `/home` namespace. There are also "rooms" which differ from the "namespace" in that they are created by the server directly at when the client wants to connect. Namespaces can be connected by the client themself (still can use auth though).
 
-At Slack, a potential structure could have a namespace be all of the public channels combined and a room could be a private channel.
+The client side connects to the `/home` namespace which was created by the server
 
 Ref:
 https://stackoverflow.com/questions/10930286/socket-io-rooms-or-namespacing
@@ -117,3 +117,39 @@ export function init() {
   notes.on('notedestroyed', emitNoteTitles);
 }
 ```
+
+## Adding debug tracing
+
+In: `package.json` we added: `DEBUG=notes:*, socket.io:*`
+
+This enables socket debug logs
+
+## Updating notes when they are edited or deleted
+
+In `notes/routes/notes.mjs` we added initilization for the socket to emit events when notes are updated or detroyed: `init()`. Additionally upon connecting to this namespace (`/notes` – which we have aligned to the route), we have the socket join a specific room which is send by the client. We are using the note keys to name the "rooms"
+
+In `notes/views/noteview.hbs` we added some JQuery to connect to the namespace and send a query to connect to a specific room (the key of a note). When the note is updated, some JQuery simply updates the note for anyone connected directly to it
+
+## Messaging on notes
+
+We are now adding messaging to notes and have it be live through websockets. They will show the username, a timestamp and the message.
+
+### Implementation
+
+1. Creating the data model `notes/models/messages-sequelize.mjs`
+2. Adding to the notes controller: `notes/routes/notes.mjs`
+3. Updating the view: `notes/views/noteview.hbs`
+
+A lot was done to the view to handle the back and forth of messages and real time updating of the page without reloading the page. This was mostly done with JQuery and Bootstrap modals and cards for display.
+
+## Summary
+
+- Implemented `Socket.io` so that users can see real time updates on notes
+
+- Added support for Passport on the websockets
+
+- Added a new data model: messages and added support with Socket.io there too
+
+- Manipulation of HTML with `jQuery`
+
+- Used the `EventEmitter` class to send events across our server code.

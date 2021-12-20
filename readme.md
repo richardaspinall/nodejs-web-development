@@ -48,3 +48,13 @@ Some great concepts are covered in this chapter:
 - Implemented encryption to keep things safe
 
 ## Chapter09 Websockets with Socket.IO
+
+- Implemented `Socket.io` so that users can see real time updates on notes
+
+- Added support for Passport on the websockets
+
+- Added a new data model: messages and added support with Socket.io there too
+
+- Manipulation of HTML with `jQuery`
+
+- Used the `EventEmitter` class to send events across our server code.

@@ -1,4 +1,4 @@
-# Notes application
+    # Notes application
 
 1. Add `.env` file with `TWITTER_CONSUMER_KEY` and `TWITTER_CONSUMER_SECRET` variables from Twitter Developer (used with Passport)
 

@@ -69,7 +69,7 @@ export class AbstractNotesStore extends EventEmitter {
   emitUpdated(note) {
     this.emit('noteupdated', note);
   }
-  emitDestroyed(note) {
+  emitDestroyed(key) {
     this.emit('notedestroyed', key);
   }
 }
